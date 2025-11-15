@@ -1,0 +1,19 @@
+# Carpetas de build / IDE
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+*.cache
+*.log
+
+# Binarios
+*.exe
+*.dll
+*.pdb
+
+# Otros
+*.tmp
+*.db
+*.db-wal
+*.db-shm
