@@ -1,0 +1,54 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="ceibo-home-hero">
+    <div class="ceibo-access-wrapper">
+        <div class="card ceibo-access-card border-0 shadow-sm ceibo-auth-card">
+
+            <div class="card-body">
+                <h2 class="ceibo-auth-title text-center mb-1">Iniciar sesión</h2>
+
+                <form id="account" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Email" class="form-label">Correo electrónico</label>
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Password" class="form-label">Contraseña</label>
+                        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input class="form-check-input" asp-for="Input.RememberMe" />
+                        <label class="form-check-label" for="Input_RememberMe">
+                            Recordarme
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn ceibo-btn-primary w-100 mb-2">
+                        Iniciar sesión
+                    </button>
+
+                </form>
+
+                <div class="ceibo-auth-footer-text text-center">
+                    ¿Todavía no tenés usuario?
+                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrate</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

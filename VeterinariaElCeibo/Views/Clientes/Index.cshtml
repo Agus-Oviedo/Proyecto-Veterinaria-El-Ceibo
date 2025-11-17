@@ -1,0 +1,209 @@
+﻿@model IEnumerable<VeterinariaElCeibo.Models.Cliente>
+
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-0">Clientes</h2>
+        <p class="text-muted mb-0">Listado de tutores.</p>
+    </div>
+
+    <a asp-action="Create" class="btn ceibo-btn-primary">
+        + Nuevo cliente
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Todavía no hay clientes cargados. Usá el botón <strong>“Nuevo cliente”</strong> para agregar el primero.
+    </div>
+}
+else
+{
+    <!-- Buscador -->
+    <div class="mb-3">
+        <input id="cliente-search"
+               type="text"
+               class="form-control"
+               placeholder="Buscar por nombre, apellido, DNI, teléfono, correo o localidad..." />
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-sm align-middle" id="clientes-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>DNI</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Localidad</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Nombre</td>
+                        <td>@item.Apellido</td>
+                        <td>@item.Dni</td>
+                        <td>@item.Telefono</td>
+                        <td>@item.Email</td>
+                        <td>@item.Localidad</td>
+                        <td class="text-end">
+                            <a asp-controller="Mascotas"
+                               asp-action="Index"
+                               asp-route-clienteId="@item.Id"
+                               class="btn btn-sm btn-outline-secondary me-1">
+                                Mascotas
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1">
+                                Editar
+                            </a>
+
+                            @* Eliminar: form POST + botón que dispara SweetAlert2 *@
+                            <form asp-action="Delete"
+                                  asp-route-id="@item.Id"
+                                  method="post"
+                                  class="d-inline delete-form">
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-danger btn-delete"
+                                        data-nombre="@($"{item.Nombre} {item.Apellido}")">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación + botón volver -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+            ← Volver al inicio
+        </a>
+
+        <div id="clientes-pagination" style="display:none;" class="d-flex align-items-center gap-2">
+            <div class="small text-muted" id="clientes-page-info"></div>
+            <div>
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="clientes-prev">Anterior</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="clientes-next">Siguiente</button>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.getElementById('clientes-table');
+            if (!table) return; // no hay datos, no hacemos nada
+
+            const searchInput = document.getElementById('cliente-search');
+            const allRows = Array.from(table.querySelectorAll('tbody tr'));
+
+            const rowsPerPage = 10;
+            let currentPage = 1;
+            let filteredRows = allRows.slice(); // copia
+
+            const paginationContainer = document.getElementById('clientes-pagination');
+            const pageInfo = document.getElementById('clientes-page-info');
+            const btnPrev = document.getElementById('clientes-prev');
+            const btnNext = document.getElementById('clientes-next');
+
+            function aplicarFiltrosYPaginacion() {
+                const term = (searchInput?.value || '').toLowerCase().trim();
+
+                if (term === '') {
+                    filteredRows = allRows.slice();
+                } else {
+                    filteredRows = allRows.filter(row =>
+                        row.innerText.toLowerCase().includes(term)
+                    );
+                }
+
+                const totalRegistros = filteredRows.length;
+                const totalPaginas = Math.max(1, Math.ceil(totalRegistros / rowsPerPage));
+
+                if (currentPage > totalPaginas) currentPage = totalPaginas;
+                if (currentPage < 1) currentPage = 1;
+
+                // Ocultar todas las filas
+                allRows.forEach(r => r.style.display = 'none');
+
+                // Mostrar solo las filas de la página actual
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                filteredRows.slice(start, end).forEach(r => {
+                    r.style.display = '';
+                });
+
+                // Actualizar info y botones
+                if (totalRegistros > rowsPerPage) {
+                    paginationContainer.style.display = 'flex';
+                } else {
+                    paginationContainer.style.display = 'none';
+                }
+
+                pageInfo.textContent =
+                    `Mostrando ${Math.min(end, totalRegistros)} de ${totalRegistros} registros (página ${currentPage} de ${totalPaginas})`;
+
+                btnPrev.disabled = (currentPage === 1);
+                btnNext.disabled = (currentPage === totalPaginas);
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function () {
+                    currentPage = 1;
+                    aplicarFiltrosYPaginacion();
+                });
+            }
+
+            btnPrev?.addEventListener('click', function () {
+                currentPage--;
+                aplicarFiltrosYPaginacion();
+            });
+
+            btnNext?.addEventListener('click', function () {
+                currentPage++;
+                aplicarFiltrosYPaginacion();
+            });
+
+            // SweetAlert2 para eliminar
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const form = this.closest('form');
+                    const nombre = this.dataset.nombre || 'el cliente';
+
+                    Swal.fire({
+                        title: '¿Eliminar cliente?',
+                        text: `Se va a eliminar a ${nombre}. Esta acción no se puede deshacer.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
+            // Primera carga
+            aplicarFiltrosYPaginacion();
+        });
+    </script>
+}

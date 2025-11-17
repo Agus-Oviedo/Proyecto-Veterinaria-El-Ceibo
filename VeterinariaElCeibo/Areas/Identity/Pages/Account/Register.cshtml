@@ -1,0 +1,86 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Registrarse";
+}
+
+<div class="ceibo-home-hero">
+    <div class="ceibo-access-wrapper">
+        <div class="card ceibo-access-card border-0 shadow-sm ceibo-auth-card">
+
+            <div class="card-body">
+                <h2 class="ceibo-auth-title text-center mb-1">Crear cuenta</h2>
+                <p class="ceibo-auth-subtitle text-center">
+                    Registrá un usuario para el sistema interno de <strong>Veterinaria El Ceibo</strong>.
+                </p>
+
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                    <!-- Correo -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Email" class="form-label">Correo electrónico</label>
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Nombre" class="form-label">Nombre</label>
+                        <input asp-for="Input.Nombre" class="form-control" />
+                        <span asp-validation-for="Input.Nombre" class="text-danger"></span>
+                    </div>
+
+                    <!-- Apellido -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Apellido" class="form-label">Apellido</label>
+                        <input asp-for="Input.Apellido" class="form-control" />
+                        <span asp-validation-for="Input.Apellido" class="text-danger"></span>
+                    </div>
+
+                    <!-- DNI -->
+                    <div class="mb-3">
+                        <label asp-for="Input.DNI" class="form-label">DNI</label>
+                        <input asp-for="Input.DNI" class="form-control" />
+                        <span asp-validation-for="Input.DNI" class="text-danger"></span>
+                    </div>
+
+                    <!-- Fecha de nacimiento -->
+                    <div class="mb-3">
+                        <label asp-for="Input.FechaNacimiento" class="form-label">Fecha de nacimiento</label>
+                        <input asp-for="Input.FechaNacimiento" class="form-control" type="date" />
+                        <span asp-validation-for="Input.FechaNacimiento" class="text-danger"></span>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Password" class="form-label">Contraseña</label>
+                        <input asp-for="Input.Password" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <!-- Confirmar contraseña -->
+                    <div class="mb-3">
+                        <label asp-for="Input.ConfirmPassword" class="form-label">Confirmar contraseña</label>
+                        <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <button id="registerSubmit" type="submit" class="btn ceibo-btn-primary w-100 mb-2">
+                        Crear cuenta
+                    </button>
+                </form>
+
+                <div class="ceibo-auth-footer-text text-center">
+                    ¿Ya tenés usuario?
+                    <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Iniciar sesión</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

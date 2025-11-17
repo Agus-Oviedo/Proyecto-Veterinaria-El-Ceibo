@@ -11,10 +11,12 @@ namespace VeterinariaElCeibo.Data
             : base(options)
         {
         }
+        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Mascota> Mascotas { get; set; }
+        public DbSet<Vacunacion> Vacunaciones { get; set; }
+        public DbSet<Desparasitacion> Desparasitaciones { get; set; }
 
-        // Más adelante acá vamos a agregar:
-        // public DbSet<Cliente> Clientes { get; set; }
-        // public DbSet<Mascota> Mascotas { get; set; }
-        // etc.
     }
 }
+
+

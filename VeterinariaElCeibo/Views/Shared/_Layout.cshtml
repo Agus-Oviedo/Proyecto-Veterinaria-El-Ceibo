@@ -1,50 +1,155 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using Microsoft.AspNetCore.Identity
+@using VeterinariaElCeibo.Models
+@using System.Text.Json
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - VeterinariaElCeibo</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/VeterinariaElCeibo.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - Veterinaria El Ceibo</title>
+
+    <!-- Bootswatch Litera (Bootstrap + tipografía del tema) -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/litera/bootstrap.min.css" />
+
+    <!-- Toastr (notificaciones) -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <!-- Tus estilos personalizados (colores, ceibo-*) -->
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VeterinariaElCeibo</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
+<body class="ceibo-body">
+    <header class="ceibo-header">
+        <div class="container ceibo-header-content">
+            <div class="d-flex align-items-center gap-2">
+                <img src="~/images/logo-ceibo.png" alt="Veterinaria El Ceibo" class="ceibo-logo" />
+                <div class="d-flex flex-column">
+                    <span class="ceibo-title">VETERINARIA</span>
+                    <span class="ceibo-subtitle">EL CEIBO</span>
                 </div>
             </div>
-        </nav>
+
+            <div class="d-flex align-items-center">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    var currentUser = await UserManager.GetUserAsync(User);
+
+                    <div class="text-end me-3 small text-light">
+                        <div>
+                            Hola, @currentUser?.Nombre @currentUser?.Apellido
+                        </div>
+                        <div class="text-warning">
+                            @* Más adelante podemos mostrar el rol principal *@
+                        </div>
+                    </div>
+
+                    <form asp-area="Identity"
+                          asp-page="/Account/Logout"
+                          asp-route-returnUrl="@Url.Action("Index", "Home")"
+                          method="post"
+                          class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-light ceibo-btn-outline">
+                            Cerrar sesión
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn btn-sm btn-light me-2 ceibo-btn-outline"
+                       asp-area="Identity" asp-page="/Account/Login">
+                        Login
+                    </a>
+                    <a class="btn btn-sm btn-warning ceibo-btn-primary"
+                       asp-area="Identity" asp-page="/Account/Register">
+                        Registrarse
+                    </a>
+                }
+            </div>
+        </div>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+    <div class="ceibo-main">
+        <main role="main" class="container ceibo-content">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - VeterinariaElCeibo - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="ceibo-footer">
+        <div class="container text-center">
+            @RenderSection("FooterImage", required: false)
+
+            <div class="small text-muted">
+                &copy; @DateTime.Now.Year - Veterinaria El Ceibo
+            </div>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <!-- jQuery desde CDN (Toastr lo usa internamente) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- JS de Bootstrap -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/site.js"></script>
+
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    @{
+        // Leemos y CONSUMIMOS los mensajes de TempData una sola vez
+        var successMessage = TempData["SuccessMessage"] as string;   // altas / ediciones
+        var deleteMessage = TempData["DeleteMessage"] as string;   // eliminaciones OK
+        var errorMessage = TempData["ErrorMessage"] as string;   // errores
+
+        // Los serializamos a JSON para que sean cadenas JS seguras
+        var successJson = JsonSerializer.Serialize(successMessage ?? string.Empty);
+        var deleteJson = JsonSerializer.Serialize(deleteMessage ?? string.Empty);
+        var errorJson = JsonSerializer.Serialize(errorMessage ?? string.Empty);
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.toastr) {
+                console.warn("toastr no está disponible. ¿Se cargó bien el script CDN?");
+                return;
+            }
+
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-bottom-right",
+                timeOut: "4000"      // 4 segundos
+            };
+
+            // Cadenas generadas desde Razor, vienen ya como strings JS válidas
+            var success = @Html.Raw(successJson);
+            var del     = @Html.Raw(deleteJson);
+            var error   = @Html.Raw(errorJson);
+
+            success = success.trim();
+            del     = del.trim();
+            error   = error.trim();
+
+            // Alta / edición -> verde
+            if (success) {
+                toastr.success(success);
+            }
+
+            // Eliminación exitosa -> rojo
+            if (del) {
+                toastr.error(del);
+            }
+
+            // Errores -> rojo
+            if (error) {
+                toastr.error(error);
+            }
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

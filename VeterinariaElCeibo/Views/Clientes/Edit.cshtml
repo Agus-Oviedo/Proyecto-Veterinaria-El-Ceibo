@@ -1,0 +1,91 @@
+﻿@model VeterinariaElCeibo.Models.Cliente
+
+@{
+    ViewData["Title"] = "Editar cliente";
+}
+
+<h2 class="mb-1">Editar cliente</h2>
+<p class="text-muted mb-3">Modificá los datos del tutor.</p>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            @* ID oculto para que el POST sepa qué registro actualizar *@
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Nombre" class="form-label"></label>
+                    <input asp-for="Nombre" class="form-control" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Apellido" class="form-label"></label>
+                    <input asp-for="Apellido" class="form-control" />
+                    <span asp-validation-for="Apellido" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="Dni" class="form-label"></label>
+                    <input asp-for="Dni" class="form-control" />
+                    <span asp-validation-for="Dni" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="Telefono" class="form-label"></label>
+                    <input asp-for="Telefono" class="form-control" />
+                    <span asp-validation-for="Telefono" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Direccion" class="form-label"></label>
+                    <input asp-for="Direccion" class="form-control" />
+                    <span asp-validation-for="Direccion" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Localidad" class="form-label"></label>
+                    <input asp-for="Localidad" class="form-control" />
+                    <span asp-validation-for="Localidad" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="FechaAlta" class="form-label"></label>
+                    <input asp-for="FechaAlta" class="form-control" />
+                    <span asp-validation-for="FechaAlta" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Observaciones" class="form-label"></label>
+                    <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Observaciones" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    ← Volver al listado
+                </a>
+
+                <div>
+                    <button type="submit" class="btn ceibo-btn-primary">
+                        Guardar cambios
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

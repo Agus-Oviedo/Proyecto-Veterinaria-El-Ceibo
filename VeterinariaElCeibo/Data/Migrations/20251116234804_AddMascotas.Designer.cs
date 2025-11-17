@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VeterinariaElCeibo.Data;
 
@@ -11,9 +12,11 @@ using VeterinariaElCeibo.Data;
 namespace VeterinariaElCeibo.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251116234804_AddMascotas")]
+    partial class AddMascotas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -288,37 +291,6 @@ namespace VeterinariaElCeibo.Data.Migrations
                     b.ToTable("Clientes");
                 });
 
-            modelBuilder.Entity("VeterinariaElCeibo.Models.Desparasitacion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MascotaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Producto")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("VeterinarioId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MascotaId");
-
-                    b.HasIndex("VeterinarioId");
-
-                    b.ToTable("Desparasitaciones");
-                });
-
             modelBuilder.Entity("VeterinariaElCeibo.Models.Mascota", b =>
                 {
                     b.Property<int>("Id")
@@ -337,7 +309,7 @@ namespace VeterinariaElCeibo.Data.Migrations
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Edad")
+                    b.Property<int?>("EdadAnios")
                         .HasColumnType("int");
 
                     b.Property<string>("Especie")
@@ -354,7 +326,7 @@ namespace VeterinariaElCeibo.Data.Migrations
                     b.Property<DateTime?>("FechaNacimiento")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NombreMascota")
+                    b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -372,37 +344,6 @@ namespace VeterinariaElCeibo.Data.Migrations
                     b.HasIndex("ClienteId");
 
                     b.ToTable("Mascotas");
-                });
-
-            modelBuilder.Entity("VeterinariaElCeibo.Models.Vacunacion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MascotaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Vacuna")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("VeterinarioId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MascotaId");
-
-                    b.HasIndex("VeterinarioId");
-
-                    b.ToTable("Vacunaciones");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -456,23 +397,6 @@ namespace VeterinariaElCeibo.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("VeterinariaElCeibo.Models.Desparasitacion", b =>
-                {
-                    b.HasOne("VeterinariaElCeibo.Models.Mascota", "Mascota")
-                        .WithMany()
-                        .HasForeignKey("MascotaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VeterinariaElCeibo.Models.ApplicationUser", "Veterinario")
-                        .WithMany()
-                        .HasForeignKey("VeterinarioId");
-
-                    b.Navigation("Mascota");
-
-                    b.Navigation("Veterinario");
-                });
-
             modelBuilder.Entity("VeterinariaElCeibo.Models.Mascota", b =>
                 {
                     b.HasOne("VeterinariaElCeibo.Models.Cliente", "Cliente")
@@ -482,23 +406,6 @@ namespace VeterinariaElCeibo.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Cliente");
-                });
-
-            modelBuilder.Entity("VeterinariaElCeibo.Models.Vacunacion", b =>
-                {
-                    b.HasOne("VeterinariaElCeibo.Models.Mascota", "Mascota")
-                        .WithMany()
-                        .HasForeignKey("MascotaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VeterinariaElCeibo.Models.ApplicationUser", "Veterinario")
-                        .WithMany()
-                        .HasForeignKey("VeterinarioId");
-
-                    b.Navigation("Mascota");
-
-                    b.Navigation("Veterinario");
                 });
 #pragma warning restore 612, 618
         }

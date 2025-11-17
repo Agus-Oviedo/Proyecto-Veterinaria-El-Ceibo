@@ -1,0 +1,119 @@
+﻿@model VeterinariaElCeibo.Models.Mascota
+
+@{
+    ViewData["Title"] = "Editar mascota";
+
+    // Si querés mostrar info del cliente, podríamos venir con Include(m => m.Cliente)
+    // en el GET de Edit, que ya lo estás haciendo.
+    var cliente = Model.Cliente;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-0">Editar mascota</h2>
+
+        @* Si vino el cliente, mostramos el tutor *@
+        @if (cliente != null)
+        {
+            <p class="text-muted mb-0">
+                Tutor: <strong>@cliente.Nombre @cliente.Apellido</strong>
+            </p>
+        }
+    </div>
+
+    <a asp-action="Index"
+       asp-route-clienteId="@Model.ClienteId"
+       class="btn btn-outline-secondary">
+        ← Volver a mascotas del tutor
+    </a>
+</div>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    @* IDs ocultos *@
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ClienteId" />
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label asp-for="NombreMascota" class="form-label"></label>
+            <input asp-for="NombreMascota" class="form-control" />
+            <span asp-validation-for="NombreMascota" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Especie" class="form-label"></label>
+            <input asp-for="Especie" class="form-control" />
+            <span asp-validation-for="Especie" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Raza" class="form-label"></label>
+            <input asp-for="Raza" class="form-control" />
+            <span asp-validation-for="Raza" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Chip" class="form-label"></label>
+            <input asp-for="Chip" class="form-control" />
+            <span asp-validation-for="Chip" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="FechaNacimiento" class="form-label"></label>
+            <input asp-for="FechaNacimiento" class="form-control" />
+            <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Edad" class="form-label"></label>
+            <input asp-for="Edad" class="form-control" />
+            <span class="form-text">
+                Completá solo si no sabés la fecha de nacimiento.
+            </span>
+            <span asp-validation-for="Edad" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4 d-flex align-items-center mt-4">
+            <div class="form-check">
+                <input asp-for="Castrado" class="form-check-input" />
+                <label asp-for="Castrado" class="form-check-label"></label>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="FechaAlta" class="form-label"></label>
+            <input asp-for="FechaAlta" class="form-control" />
+            <span asp-validation-for="FechaAlta" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="FechaBaja" class="form-label"></label>
+            <input asp-for="FechaBaja" class="form-control" />
+            <span asp-validation-for="FechaBaja" class="text-danger"></span>
+        </div>
+
+        <div class="col-12">
+            <label asp-for="Observaciones" class="form-label"></label>
+            <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Observaciones" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a asp-action="Index"
+           asp-route-clienteId="@Model.ClienteId"
+           class="btn btn-outline-secondary">
+            ← Cancelar
+        </a>
+
+        <button type="submit" class="btn ceibo-btn-primary">
+            Guardar cambios
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

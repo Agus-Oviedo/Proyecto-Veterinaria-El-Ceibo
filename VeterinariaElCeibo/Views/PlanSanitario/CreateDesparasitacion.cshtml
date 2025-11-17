@@ -1,0 +1,95 @@
+﻿@model VeterinariaElCeibo.Models.Desparasitacion
+
+@{
+    ViewData["Title"] = "Nueva desparasitación";
+
+    var mascota = ViewBag.Mascota as VeterinariaElCeibo.Models.Mascota;
+    var tutor = mascota?.Cliente;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-0">Registrar desparasitación</h2>
+
+        @if (mascota != null)
+        {
+            <p class="text-muted mb-0">
+                Mascota: <strong>@mascota.NombreMascota</strong>
+                (@mascota.Especie @if (!string.IsNullOrWhiteSpace(mascota.Raza)) {
+                @($"- {mascota.Raza}")
+            }
+)
+        </p>
+
+        @if (tutor != null)
+        {
+            <p class="text-muted mb-0">
+                Tutor: <strong>@tutor.Nombre @tutor.Apellido</strong>
+            </p>
+        }
+                }
+    </div>
+
+    @if (mascota != null)
+    {
+        <a asp-action="Index"
+           asp-route-mascotaId="@mascota.Id"
+           class="btn btn-outline-secondary">
+            ← Volver a libreta sanitaria
+        </a>
+    }
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form asp-action="CreateDesparasitacion" method="post">
+            @Html.AntiForgeryToken()
+
+            @* Muy importante: MascotaId oculto *@
+            <input type="hidden" asp-for="MascotaId" />
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="Fecha" class="form-label"></label>
+                    <input asp-for="Fecha" class="form-control" />
+                    <span asp-validation-for="Fecha" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="Producto" class="form-label"></label>
+                    <input asp-for="Producto" class="form-control" />
+                    <span asp-validation-for="Producto" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="VeterinarioId" class="form-label">Veterinario</label>
+                    <select asp-for="VeterinarioId"
+                            class="form-select"
+                            asp-items="ViewBag.Veterinarios">
+                        <option value="">Seleccionar veterinario...</option>
+                    </select>
+                    <span asp-validation-for="VeterinarioId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between">
+                @if (mascota != null)
+                {
+                    <a asp-action="Index"
+                       asp-route-mascotaId="@mascota.Id"
+                       class="btn btn-outline-secondary">
+                        ← Cancelar
+                    </a>
+                }
+
+                <button type="submit" class="btn ceibo-btn-primary">
+                    Guardar desparasitación
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

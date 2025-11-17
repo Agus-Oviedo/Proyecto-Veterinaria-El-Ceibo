@@ -1,8 +1,49 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="ceibo-home-hero">
+    <div class="ceibo-access-wrapper">
+        <div class="card ceibo-access-card border-0 shadow-sm w-100" style="max-width: 1000px;">
+
+            <div class="card-body">
+                <div class="row g-4">
+
+                    <div class="col-12 col-md-4">
+                        <a asp-controller="Turnos" asp-action="Index"
+                           class="ceibo-quick-card ceibo-quick-card-primary">
+                            <div class="ceibo-quick-card-icon">📅</div>
+                            <div class="ceibo-quick-card-title">Turnos</div>
+                            <div class="ceibo-quick-card-subtitle">
+                                Agenda de turnos programados
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <a asp-controller="Clientes" asp-action="Index"
+                           class="ceibo-quick-card ceibo-quick-card-primary">
+                            <div class="ceibo-quick-card-icon">👤</div>
+                            <div class="ceibo-quick-card-title">Clientes</div>
+                            <div class="ceibo-quick-card-subtitle">
+                                Listado de clientes y sus mascotas
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <a asp-controller="Mascotas" asp-action="Index"
+                           class="ceibo-quick-card ceibo-quick-card-primary">
+                            <div class="ceibo-quick-card-icon">🐾</div>
+                            <div class="ceibo-quick-card-title">Mascotas</div>
+                            <div class="ceibo-quick-card-subtitle">
+                                Registro de mascotas
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
