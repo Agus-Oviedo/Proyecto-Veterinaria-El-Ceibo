@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VeterinariaElCeibo.Data;
 
@@ -11,9 +12,11 @@ using VeterinariaElCeibo.Data;
 namespace VeterinariaElCeibo.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251119052417_AddConsultaClinica")]
+    partial class AddConsultaClinica
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -335,6 +338,7 @@ namespace VeterinariaElCeibo.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("VeterinarioId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -377,44 +381,6 @@ namespace VeterinariaElCeibo.Data.Migrations
                     b.HasIndex("VeterinarioId");
 
                     b.ToTable("Desparasitaciones");
-                });
-
-            modelBuilder.Entity("VeterinariaElCeibo.Models.Internacion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("ConsultaIngresoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime?>("FechaAlta")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaIngreso")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MascotaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MotivoIngreso")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConsultaIngresoId");
-
-                    b.HasIndex("MascotaId");
-
-                    b.ToTable("Internaciones");
                 });
 
             modelBuilder.Entity("VeterinariaElCeibo.Models.Mascota", b =>
@@ -470,43 +436,6 @@ namespace VeterinariaElCeibo.Data.Migrations
                     b.HasIndex("ClienteId");
 
                     b.ToTable("Mascotas");
-                });
-
-            modelBuilder.Entity("VeterinariaElCeibo.Models.RegistroInternacion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("FechaHora")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("InternacionId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("PesoKg")
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<decimal?>("TemperaturaC")
-                        .HasColumnType("decimal(4,1)");
-
-                    b.Property<string>("VeterinarioId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InternacionId");
-
-                    b.HasIndex("VeterinarioId");
-
-                    b.ToTable("RegistrosInternacion");
                 });
 
             modelBuilder.Entity("VeterinariaElCeibo.Models.Turno", b =>
@@ -651,7 +580,9 @@ namespace VeterinariaElCeibo.Data.Migrations
 
                     b.HasOne("VeterinariaElCeibo.Models.ApplicationUser", "Veterinario")
                         .WithMany()
-                        .HasForeignKey("VeterinarioId");
+                        .HasForeignKey("VeterinarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Mascota");
 
@@ -677,23 +608,6 @@ namespace VeterinariaElCeibo.Data.Migrations
                     b.Navigation("Veterinario");
                 });
 
-            modelBuilder.Entity("VeterinariaElCeibo.Models.Internacion", b =>
-                {
-                    b.HasOne("VeterinariaElCeibo.Models.ConsultaClinica", "ConsultaIngreso")
-                        .WithMany()
-                        .HasForeignKey("ConsultaIngresoId");
-
-                    b.HasOne("VeterinariaElCeibo.Models.Mascota", "Mascota")
-                        .WithMany()
-                        .HasForeignKey("MascotaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ConsultaIngreso");
-
-                    b.Navigation("Mascota");
-                });
-
             modelBuilder.Entity("VeterinariaElCeibo.Models.Mascota", b =>
                 {
                     b.HasOne("VeterinariaElCeibo.Models.Cliente", "Cliente")
@@ -703,23 +617,6 @@ namespace VeterinariaElCeibo.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Cliente");
-                });
-
-            modelBuilder.Entity("VeterinariaElCeibo.Models.RegistroInternacion", b =>
-                {
-                    b.HasOne("VeterinariaElCeibo.Models.Internacion", "Internacion")
-                        .WithMany("Registros")
-                        .HasForeignKey("InternacionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VeterinariaElCeibo.Models.ApplicationUser", "Veterinario")
-                        .WithMany()
-                        .HasForeignKey("VeterinarioId");
-
-                    b.Navigation("Internacion");
-
-                    b.Navigation("Veterinario");
                 });
 
             modelBuilder.Entity("VeterinariaElCeibo.Models.Turno", b =>
@@ -748,11 +645,6 @@ namespace VeterinariaElCeibo.Data.Migrations
                     b.Navigation("Mascota");
 
                     b.Navigation("Veterinario");
-                });
-
-            modelBuilder.Entity("VeterinariaElCeibo.Models.Internacion", b =>
-                {
-                    b.Navigation("Registros");
                 });
 #pragma warning restore 612, 618
         }

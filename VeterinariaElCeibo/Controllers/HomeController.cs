@@ -1,9 +1,12 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using VeterinariaElCeibo.Models;
 
 namespace VeterinariaElCeibo.Controllers
 {
+    // 👉 Obliga a estar logueado para entrar a Home/Index
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

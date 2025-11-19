@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace VeterinariaElCeibo.Models
 {
@@ -8,21 +9,26 @@ namespace VeterinariaElCeibo.Models
     {
         public int Id { get; set; }
 
+        // ---------- Relación con Cliente ----------
+
         [Required]
         [Display(Name = "Cliente")]
         public int ClienteId { get; set; }
 
-        // 👉 Hacerla nullable para que no sea requerida por el validador
+        // Navegación: no se valida en los formularios (solo se usa para mostrar)
+        [ValidateNever]
         public Cliente? Cliente { get; set; }
+
+        // ---------- Datos de la mascota ----------
 
         [Required(ErrorMessage = "El nombre de la mascota es obligatorio.")]
         [MaxLength(50)]
         [Display(Name = "Nombre de la mascota")]
-        public string NombreMascota { get; set; }
+        public string NombreMascota { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "La especie es obligatoria.")]
         [MaxLength(30)]
-        public string Especie { get; set; }
+        public string Especie { get; set; } = string.Empty;
 
         [MaxLength(50)]
         public string? Raza { get; set; }
@@ -40,7 +46,9 @@ namespace VeterinariaElCeibo.Models
         [Display(Name = "Edad (años)")]
         public int? Edad { get; set; }
 
+        // Edad calculada en base a la fecha de nacimiento (no se guarda en BD)
         [NotMapped]
+        [Display(Name = "Edad (calculada)")]
         public int? EdadCalculada
         {
             get

@@ -3,11 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using VeterinariaElCeibo.Data;
 using VeterinariaElCeibo.Models;
 
 namespace VeterinariaElCeibo.Controllers
 {
+    // 👉 Admin, Veterinario y Peluqueria pueden gestionar clientes
+    [Authorize(Roles = "Administrador,Veterinario,Peluqueria")]
     public class ClientesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -157,7 +160,6 @@ namespace VeterinariaElCeibo.Controllers
                 _context.Clientes.Remove(cliente);
                 await _context.SaveChangesAsync();
 
-                // Usamos DeleteMessage para que el layout muestre el toast rojo
                 TempData["DeleteMessage"] = "Cliente eliminado correctamente.";
             }
             catch (Exception)

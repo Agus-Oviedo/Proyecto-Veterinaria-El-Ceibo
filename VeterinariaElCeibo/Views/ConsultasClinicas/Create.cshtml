@@ -1,0 +1,119 @@
+﻿@model VeterinariaElCeibo.Models.ConsultaClinica
+
+@{
+    ViewData["Title"] = "Nueva consulta clínica";
+    var mascota = ViewBag.Mascota as VeterinariaElCeibo.Models.Mascota;
+}
+
+<h1>Nueva consulta clínica</h1>
+
+@if (mascota != null)
+{
+    <div class="mb-3">
+        <h5>
+            Mascota: <strong>@mascota.NombreMascota</strong><br />
+            Tutor: @mascota.Cliente?.NombreCompleto
+        </h5>
+    </div>
+}
+
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="MascotaId" />
+            <input type="hidden" asp-for="TurnoId" />
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="FechaConsulta" class="form-label"></label>
+                <input asp-for="FechaConsulta" class="form-control" type="date" />
+                <span asp-validation-for="FechaConsulta" class="text-danger"></span>
+            </div>
+
+            <!-- Veterinario -->
+            <div class="mb-3">
+                <label asp-for="VeterinarioId" class="form-label">Veterinario</label>
+                <select asp-for="VeterinarioId"
+                        class="form-select"
+                        asp-items="ViewBag.Veterinarios">
+                    <option value="">-- Seleccioná un veterinario --</option>
+                </select>
+                <span asp-validation-for="VeterinarioId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Motivo" class="form-label"></label>
+                <input asp-for="Motivo" class="form-control" />
+                <span asp-validation-for="Motivo" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Anamnesis" class="form-label"></label>
+                <textarea asp-for="Anamnesis" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Anamnesis" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ExamenFisico" class="form-label"></label>
+                <textarea asp-for="ExamenFisico" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="ExamenFisico" class="text-danger"></span>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label asp-for="PesoKg" class="form-label"></label>
+                    <input asp-for="PesoKg" class="form-control" />
+                    <span asp-validation-for="PesoKg" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="TemperaturaC" class="form-label"></label>
+                    <input asp-for="TemperaturaC" class="form-control" />
+                    <span asp-validation-for="TemperaturaC" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Diagnostico" class="form-label"></label>
+                <textarea asp-for="Diagnostico" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Diagnostico" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Tratamiento" class="form-label"></label>
+                <textarea asp-for="Tratamiento" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Tratamiento" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Indicaciones" class="form-label"></label>
+                <textarea asp-for="Indicaciones" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Indicaciones" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ProximoControl" class="form-label"></label>
+                <input asp-for="ProximoControl" class="form-control" type="date" />
+                <span asp-validation-for="ProximoControl" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar consulta</button>
+
+            <a asp-action="Index"
+               asp-route-mascotaId="@Model.MascotaId"
+               class="btn btn-secondary">
+                Volver a historia clínica
+            </a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

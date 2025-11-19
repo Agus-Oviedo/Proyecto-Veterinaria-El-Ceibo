@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VeterinariaElCeibo.Models
 {
@@ -44,5 +45,10 @@ namespace VeterinariaElCeibo.Models
         [MaxLength(500)]
         [Display(Name = "Observaciones")]
         public string? Observaciones { get; set; } // OPCIONAL
+
+        // -------- NUEVO: nombre completo para mostrar en combos, listas, etc. --------
+        [NotMapped]
+        [Display(Name = "Cliente")]
+        public string NombreCompleto => $"{Nombre} {Apellido}";
     }
 }

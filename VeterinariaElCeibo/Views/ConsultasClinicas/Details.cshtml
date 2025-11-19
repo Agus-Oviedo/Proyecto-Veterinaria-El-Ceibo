@@ -1,0 +1,117 @@
+﻿@model VeterinariaElCeibo.Models.ConsultaClinica
+
+@{
+    ViewData["Title"] = "Detalle de consulta clínica";
+
+    bool tieneInternacion = ViewBag.TieneInternacion != null && (bool)ViewBag.TieneInternacion;
+}
+
+<h1>Detalle de consulta clínica</h1>
+
+<div class="mb-3">
+    <h5>
+        Mascota: <strong>@Model.Mascota?.NombreMascota</strong><br />
+        Tutor: @Model.Mascota?.Cliente?.NombreCompleto
+    </h5>
+    <p class="mb-1">
+        <strong>Fecha de consulta:</strong> @Model.FechaConsulta.ToString("dd/MM/yyyy")
+    </p>
+    <p class="mb-1">
+        <strong>Veterinario:</strong>
+        @if (Model.Veterinario != null)
+        {
+            @($"{Model.Veterinario.Nombre} {Model.Veterinario.Apellido}")
+        }
+        else
+        {
+            <span class="text-muted">No registrado</span>
+        }
+    </p>
+    @if (Model.Turno != null)
+    {
+        <p class="mb-1">
+            <strong>Turno asociado:</strong>
+            @Model.Turno.FechaHora.ToString("dd/MM/yyyy HH:mm") -
+            @Model.Turno.Motivo
+        </p>
+    }
+</div>
+
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-3">Motivo de consulta</dt>
+    <dd class="col-sm-9">@Model.Motivo</dd>
+
+    <dt class="col-sm-3">Relato / Anamnesis</dt>
+    <dd class="col-sm-9">@Model.Anamnesis</dd>
+
+    <dt class="col-sm-3">Examen físico / Hallazgos</dt>
+    <dd class="col-sm-9">@Model.ExamenFisico</dd>
+
+    <dt class="col-sm-3">Peso (kg)</dt>
+    <dd class="col-sm-9">@Model.PesoKg?.ToString("0.00")</dd>
+
+    <dt class="col-sm-3">Temperatura (°C)</dt>
+    <dd class="col-sm-9">@Model.TemperaturaC?.ToString("0.0")</dd>
+
+    <dt class="col-sm-3">Diagnóstico</dt>
+    <dd class="col-sm-9">@Model.Diagnostico</dd>
+
+    <dt class="col-sm-3">Tratamiento / Medicación</dt>
+    <dd class="col-sm-9">@Model.Tratamiento</dd>
+
+    <dt class="col-sm-3">Indicaciones al tutor</dt>
+    <dd class="col-sm-9">@Model.Indicaciones</dd>
+
+    <dt class="col-sm-3">Próximo control</dt>
+    <dd class="col-sm-9">
+        @if (Model.ProximoControl.HasValue)
+        {
+            @Model.ProximoControl.Value.ToString("dd/MM/yyyy")
+        }
+        else
+        {
+            <span class="text-muted">No programado</span>
+        }
+    </dd>
+</dl>
+
+<div class="mt-3">
+    <a asp-action="Index"
+       asp-route-mascotaId="@Model.MascotaId"
+       class="btn btn-secondary">
+        &larr; Volver a historia clínica
+    </a>
+
+    @if (tieneInternacion)
+    {
+        <!-- Ya existe internación para esta consulta: solo mostramos hoja -->
+        <a asp-controller="Internaciones"
+           asp-action="Hoja"
+           asp-route-consultaId="@Model.Id"
+           class="btn btn-warning ms-2">
+            Hoja de internación
+        </a>
+    }
+    else
+    {
+        <!-- No hay internación todavía: permitir iniciarla -->
+        <form asp-controller="Internaciones"
+              asp-action="Iniciar"
+              method="post"
+              class="d-inline ms-2"
+              id="formIniciarInternacion">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="consultaId" value="@Model.Id" />
+
+            <button type="submit" class="btn btn-warning">
+                Iniciar internación
+            </button>
+        </form>
+    }
+
+    @* Si después hacés Edit, podés activar esto:
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary ms-2">Editar consulta</a>
+    *@
+</div>

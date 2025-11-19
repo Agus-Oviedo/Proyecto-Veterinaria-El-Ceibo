@@ -1,0 +1,214 @@
+﻿@model IEnumerable<VeterinariaElCeibo.Models.Turno>
+
+@{
+    ViewData["Title"] = "Turnos del mes";
+
+    var fechaConsulta = ViewBag.FechaConsulta != null
+        ? (DateTime)ViewBag.FechaConsulta
+        : DateTime.Today;
+
+    var primerDiaMes = ViewBag.PrimerDiaMes != null
+        ? (DateTime)ViewBag.PrimerDiaMes
+        : new DateTime(fechaConsulta.Year, fechaConsulta.Month, 1);
+
+    int diasEnMes = DateTime.DaysInMonth(primerDiaMes.Year, primerDiaMes.Month);
+
+    // DayOfWeek: Monday = 1 ... Sunday = 0
+    // Queremos que la semana empiece en Lunes (columna 0)
+    int startCol = primerDiaMes.DayOfWeek == DayOfWeek.Sunday
+        ? 6
+        : ((int)primerDiaMes.DayOfWeek - 1);
+
+    // Agrupamos los turnos por día para mostrarlos en cada celda
+    var turnosPorDia = Model
+        .GroupBy(t => t.FechaHora.Date)
+        .ToDictionary(g => g.Key, g => g.ToList());
+}
+
+<h1>Turnos del mes</h1>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <form asp-action="Index" method="get" class="row g-2">
+        <div class="col-auto">
+            <label class="col-form-label">Mes:</label>
+        </div>
+        <div class="col-auto">
+            <input type="month"
+                   name="fecha"
+                   class="form-control"
+                   value="@fechaConsulta.ToString("yyyy-MM")" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Create" class="btn btn-success">Nuevo turno</a>
+        </div>
+    </form>
+
+    <div>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+            Volver al inicio
+        </a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered calendar-table">
+        <thead class="table-light text-center">
+            <tr>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+                <th>Sábado</th>
+                <th>Domingo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int diaActual = 1;
+                bool terminado = false;
+
+                for (int fila = 0; fila < 6 && !terminado; fila++)
+                {
+                    <tr>
+                        @for (int col = 0; col < 7; col++)
+                        {
+                            if (fila == 0 && col < startCol)
+                            {
+                                // celdas vacías antes del primer día
+                                <td class="align-top calendar-day empty"></td>
+                            }
+                            else if (diaActual > diasEnMes)
+                            {
+                                <td class="align-top calendar-day empty"></td>
+                                if (col == 6)
+                                {
+                                    terminado = true;
+                                }
+                            }
+                            else
+                            {
+                                var fechaDia = new DateTime(primerDiaMes.Year, primerDiaMes.Month, diaActual);
+                                <td class="align-top calendar-day">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="fw-bold">@diaActual</span>
+                                    </div>
+
+                                    @if (turnosPorDia.TryGetValue(fechaDia.Date, out var turnosDelDia))
+                                    {
+                                        <ul class="list-unstyled small mt-1 mb-0">
+                                            @foreach (var turno in turnosDelDia)
+                                            {
+                                                // clases de color para el texto y el badge
+                                                var cssEstadoTexto = turno.EstadoTurno switch
+                                                {
+                                                    "Pendiente" => "text-danger",
+                                                    "Confirmado" => "text-primary",
+                                                    "Atendido" => "text-success",
+                                                    "Cancelado" => "text-muted text-decoration-line-through",
+                                                    _ => "text-dark"
+                                                };
+
+                                                var cssBadge = turno.EstadoTurno switch
+                                                {
+                                                    "Pendiente" => "bg-danger",
+                                                    "Confirmado" => "bg-primary",
+                                                    "Atendido" => "bg-success",
+                                                    "Cancelado" => "bg-secondary",
+                                                    _ => "bg-dark"
+                                                };
+
+                                                <li class="mb-1">
+                                                    <div class="d-flex justify-content-between align-items-center @cssEstadoTexto">
+                                                        <div class="me-2">
+                                                            @* link al Edit para ver/editar el turno completo *@
+                                                            <a asp-action="Edit"
+                                                               asp-route-id="@turno.TurnoId"
+                                                               class="text-reset text-decoration-none">
+                                                                @turno.FechaHora.ToString("HH:mm") -
+                                                                @turno.Mascota?.NombreMascota
+                                                                (@turno.Mascota?.Cliente?.Nombre)
+                                                            </a>
+                                                        </div>
+
+                                                        @* Badge clickeable para cambiar estado (SweetAlert + SP) *@
+                                                        <span class="badge estado-badge @cssBadge"
+                                                              data-id="@turno.TurnoId"
+                                                              data-estado="@turno.EstadoTurno"
+                                                              style="cursor:pointer;"
+                                                              title="Cambiar estado">
+                                                            @turno.EstadoTurno
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                </td>
+                                diaActual++;
+                            }
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@* Formulario oculto para enviar el cambio de estado al controlador (SP) *@
+<form id="formCambiarEstado" asp-action="CambiarEstado" method="post" class="d-none">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" id="EstadoTurnoId" />
+    <input type="hidden" name="nuevoEstado" id="EstadoTurnoNuevo" />
+</form>
+
+<style>
+    .calendar-table {
+        table-layout: fixed;
+        font-size: 0.9rem;
+    }
+
+    .calendar-day {
+        height: 140px;
+        vertical-align: top;
+    }
+
+        .calendar-day.empty {
+            background-color: #f8f9fa;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('.estado-badge').on('click', function () {
+                var id = $(this).data('id');
+                var estadoActual = $(this).data('estado');
+
+                Swal.fire({
+                    title: 'Cambiar estado del turno',
+                    input: 'select',
+                    inputOptions: {
+                        'Pendiente': 'Pendiente',
+                        'Confirmado': 'Confirmado',
+                        'Atendido': 'Atendido',
+                        'Cancelado': 'Cancelado'
+                    },
+                    inputValue: estadoActual,
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar',
+                    cancelButtonText: 'Cancelar'
+                }).then(function (result) {
+                    if (result.isConfirmed && result.value) {
+                        $('#EstadoTurnoId').val(id);
+                        $('#EstadoTurnoNuevo').val(result.value);
+                        $('#formCambiarEstado').submit(); // 👉 llama a CambiarEstado (SP)
+                    }
+                });
+            });
+        });
+    </script>
+}

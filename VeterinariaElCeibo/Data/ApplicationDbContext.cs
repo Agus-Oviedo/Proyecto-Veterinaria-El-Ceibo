@@ -15,6 +15,22 @@ namespace VeterinariaElCeibo.Data
         public DbSet<Mascota> Mascotas { get; set; }
         public DbSet<Vacunacion> Vacunaciones { get; set; }
         public DbSet<Desparasitacion> Desparasitaciones { get; set; }
+        public DbSet<Turno> Turnos { get; set; }
+        public DbSet<ConsultaClinica> ConsultasClinicas { get; set; }
+        public DbSet<Internacion> Internaciones { get; set; }
+        public DbSet<RegistroInternacion> RegistrosInternacion { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Turno>()
+                .HasOne(t => t.Mascota)
+                .WithMany() // si después le agregás ICollection<Turno> a Mascota, lo cambiamos
+                .HasForeignKey(t => t.MascotaId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
 
     }
 }

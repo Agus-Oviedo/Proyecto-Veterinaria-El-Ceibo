@@ -3,12 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using VeterinariaElCeibo.Data;
 using VeterinariaElCeibo.Models;
 using VeterinariaElCeibo.ViewModels;
 
 namespace VeterinariaElCeibo.Controllers
 {
+    // 👉 Admin, Veterinario y Peluqueria pueden gestionar mascotas
+    [Authorize(Roles = "Administrador,Veterinario,Peluqueria")]
     public class MascotasController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -64,8 +67,7 @@ namespace VeterinariaElCeibo.Controllers
             var cliente = await _context.Clientes.FindAsync(mascota.ClienteId);
             ViewBag.Cliente = cliente;
 
-            // IMPORTANTE: como la navegación Cliente no viene en el formulario,
-            // nos aseguramos de que no interfiera en la validación
+            // La navegación Cliente no viene del form, la sacamos de la validación
             ModelState.Remove(nameof(Mascota.Cliente));
 
             if (!ModelState.IsValid)

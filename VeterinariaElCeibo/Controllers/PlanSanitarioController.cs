@@ -5,12 +5,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using VeterinariaElCeibo.Data;
 using VeterinariaElCeibo.Models;
 using VeterinariaElCeibo.ViewModels;
 
 namespace VeterinariaElCeibo.Controllers
 {
+    // 👉 Solo Administrador y Veterinario gestionan plan sanitario
+    [Authorize(Roles = "Administrador,Veterinario")]
     public class PlanSanitarioController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,9 +27,7 @@ namespace VeterinariaElCeibo.Controllers
             _userManager = userManager;
         }
 
-        // ----------------------------------------------------
-        // LIBRETA SANITARIA - INDEX
-        // ----------------------------------------------------
+        // ================== LIBRETA SANITARIA ==================
         // GET: PlanSanitario?mascotaId=5
         public async Task<IActionResult> Index(int mascotaId)
         {
@@ -58,9 +59,7 @@ namespace VeterinariaElCeibo.Controllers
             return View(vm);
         }
 
-        // ----------------------------------------------------
-        // CREATE VACUNA - GET
-        // ----------------------------------------------------
+        // ================== CREATE VACUNA (GET) ==================
         public async Task<IActionResult> CreateVacuna(int mascotaId)
         {
             var mascota = await _context.Mascotas
@@ -81,9 +80,7 @@ namespace VeterinariaElCeibo.Controllers
             return View(modelo);
         }
 
-        // ----------------------------------------------------
-        // CREATE VACUNA - POST
-        // ----------------------------------------------------
+        // ================== CREATE VACUNA (POST) ==================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateVacuna(Vacunacion modelo)
@@ -118,9 +115,7 @@ namespace VeterinariaElCeibo.Controllers
             }
         }
 
-        // ----------------------------------------------------
-        // EDIT VACUNA - GET
-        // ----------------------------------------------------
+        // ================== EDIT VACUNA (GET) ==================
         public async Task<IActionResult> EditVacuna(int id)
         {
             var vacuna = await _context.Vacunaciones
@@ -136,9 +131,7 @@ namespace VeterinariaElCeibo.Controllers
             return View(vacuna);
         }
 
-        // ----------------------------------------------------
-        // EDIT VACUNA - POST
-        // ----------------------------------------------------
+        // ================== EDIT VACUNA (POST) ==================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditVacuna(int id, Vacunacion modelo)
@@ -183,9 +176,7 @@ namespace VeterinariaElCeibo.Controllers
             }
         }
 
-        // ----------------------------------------------------
-        // DELETE VACUNA - POST
-        // ----------------------------------------------------
+        // ================== DELETE VACUNA ==================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteVacuna(int id)
@@ -206,9 +197,7 @@ namespace VeterinariaElCeibo.Controllers
             return RedirectToAction(nameof(Index), new { mascotaId });
         }
 
-        // ----------------------------------------------------
-        // CREATE DESPARASITACION - GET
-        // ----------------------------------------------------
+        // ================== CREATE DESPARASITACIÓN (GET) ==================
         public async Task<IActionResult> CreateDesparasitacion(int mascotaId)
         {
             var mascota = await _context.Mascotas
@@ -229,9 +218,7 @@ namespace VeterinariaElCeibo.Controllers
             return View(modelo);
         }
 
-        // ----------------------------------------------------
-        // CREATE DESPARASITACION - POST
-        // ----------------------------------------------------
+        // ================== CREATE DESPARASITACIÓN (POST) ==================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateDesparasitacion(Desparasitacion modelo)
@@ -266,9 +253,7 @@ namespace VeterinariaElCeibo.Controllers
             }
         }
 
-        // ----------------------------------------------------
-        // EDIT DESPARASITACION - GET
-        // ----------------------------------------------------
+        // ================== EDIT DESPARASITACIÓN (GET) ==================
         public async Task<IActionResult> EditDesparasitacion(int id)
         {
             var despara = await _context.Desparasitaciones
@@ -284,9 +269,7 @@ namespace VeterinariaElCeibo.Controllers
             return View(despara);
         }
 
-        // ----------------------------------------------------
-        // EDIT DESPARASITACION - POST
-        // ----------------------------------------------------
+        // ================== EDIT DESPARASITACIÓN (POST) ==================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditDesparasitacion(int id, Desparasitacion modelo)
@@ -331,9 +314,7 @@ namespace VeterinariaElCeibo.Controllers
             }
         }
 
-        // ----------------------------------------------------
-        // DELETE DESPARASITACION - POST
-        // ----------------------------------------------------
+        // ================== DELETE DESPARASITACIÓN ==================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteDesparasitacion(int id)
@@ -354,9 +335,7 @@ namespace VeterinariaElCeibo.Controllers
             return RedirectToAction(nameof(Index), new { mascotaId });
         }
 
-        // ----------------------------------------------------
-        // MÉTODO PRIVADO: LISTA DE VETERINARIOS
-        // ----------------------------------------------------
+        // ================== MÉTODO PRIVADO: LISTA VETERINARIOS ==================
         private async Task CargarVeterinariosEnViewBag()
         {
             var vets = await _userManager.GetUsersInRoleAsync("Veterinario");

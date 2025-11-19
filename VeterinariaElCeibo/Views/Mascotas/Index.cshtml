@@ -71,14 +71,14 @@ else
                             @(m.Castrado ? "Sí" : "No")
                         </td>
                         <td class="text-end">
-
-                            @* Consulta / Historia clínica *@
-                            <a asp-controller="HistoriaClinica"
+                            @* Consulta Clinica *@
+                            <a asp-controller="ConsultasClinicas"
                                asp-action="Index"
                                asp-route-mascotaId="@m.Id"
-                               class="btn btn-sm btn-outline-primary me-1">
+                               class="btn btn-sm btn-primary">
                                 Consulta
                             </a>
+
 
                             @* Libreta sanitaria / Plan sanitario *@
                             <a asp-controller="PlanSanitario"

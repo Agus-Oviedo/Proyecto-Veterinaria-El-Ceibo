@@ -2,6 +2,22 @@
     ViewData["Title"] = "Inicio";
 }
 
+<!-- Navbar simple arriba del dashboard -->
+<nav class="mb-3 d-flex justify-content-between align-items-center">
+
+    <div>
+        @* Solo el ADMIN ve este botón *@
+        @if (User.IsInRole("Administrador"))
+        {
+            <a asp-controller="Usuarios"
+               asp-action="Index"
+               class="btn btn-sm btn-outline-light ceibo-btn-outline">
+                👥 Usuarios / Roles
+            </a>
+        }
+    </div>
+</nav>
+
 <div class="ceibo-home-hero">
     <div class="ceibo-access-wrapper">
         <div class="card ceibo-access-card border-0 shadow-sm w-100" style="max-width: 1000px;">
@@ -32,12 +48,12 @@
                     </div>
 
                     <div class="col-12 col-md-4">
-                        <a asp-controller="Mascotas" asp-action="Index"
+                        <a asp-controller="Internaciones" asp-action="Activas"
                            class="ceibo-quick-card ceibo-quick-card-primary">
                             <div class="ceibo-quick-card-icon">🐾</div>
-                            <div class="ceibo-quick-card-title">Mascotas</div>
+                            <div class="ceibo-quick-card-title">Internación</div>
                             <div class="ceibo-quick-card-subtitle">
-                                Registro de mascotas
+                                Mascotas internadas
                             </div>
                         </a>
                     </div>

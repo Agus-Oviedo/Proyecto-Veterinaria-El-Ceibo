@@ -1,0 +1,197 @@
+﻿@model VeterinariaElCeibo.Models.Internacion
+
+@{
+    ViewData["Title"] = "Hoja de internación";
+}
+
+<h1>Hoja de internación</h1>
+
+<div class="mb-3">
+    <h5>
+        Mascota: <strong>@Model.Mascota?.NombreMascota</strong><br />
+        Tutor: @Model.Mascota?.Cliente?.NombreCompleto
+    </h5>
+    <p class="mb-1">
+        <strong>Fecha de ingreso:</strong> @Model.FechaIngreso.ToString("dd/MM/yyyy HH:mm")
+    </p>
+    <p class="mb-1">
+        <strong>Motivo de ingreso:</strong> @Model.MotivoIngreso
+    </p>
+    <p class="mb-1">
+        <strong>Estado:</strong> @Model.Estado
+        @if (Model.FechaAlta.HasValue)
+        {
+            <span class="ms-2 text-muted">
+                (Alta: @Model.FechaAlta.Value.ToString("dd/MM/yyyy HH:mm"))
+            </span>
+        }
+    </p>
+
+    @* Botón DAR ALTA solo si está activa *@
+    @if (Model.Estado == "Activa" && !Model.FechaAlta.HasValue)
+    {
+        <form asp-action="DarAlta"
+              method="post"
+              id="formDarAlta"
+              class="d-inline">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <input type="hidden" name="consultaId" value="@Model.ConsultaIngresoId" />
+
+            <button type="button"
+                    id="btnDarAlta"
+                    class="btn btn-sm btn-danger">
+                Dar alta
+            </button>
+        </form>
+    }
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <h4>Registros</h4>
+
+        <table class="table table-sm table-striped table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 160px;">Fecha / Hora</th>
+                    <th>Descripción</th>
+                    <th style="width: 190px;">Veterinario</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Registros == null || !Model.Registros.Any())
+                {
+                    <tr>
+                        <td colspan="3" class="text-muted text-center">
+                            No hay registros de internación aún.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var r in Model.Registros.OrderBy(r => r.FechaHora))
+                    {
+                        <tr>
+                            <td>@r.FechaHora.ToString("dd/MM HH:mm")</td>
+                            <td>
+                                @r.Descripcion
+                                @if (r.PesoKg.HasValue || r.TemperaturaC.HasValue)
+                                {
+                                    <div class="small text-muted mt-1">
+                                        @if (r.PesoKg.HasValue)
+                                        {
+                                            <span>Peso: @r.PesoKg.Value.ToString("0.00") kg</span>
+                                        }
+                                        @if (r.TemperaturaC.HasValue)
+                                        {
+                                            <span class="ms-2">Temp: @r.TemperaturaC.Value.ToString("0.0") °C</span>
+                                        }
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                @if (r.Veterinario != null)
+                                {
+                                    @($"{r.Veterinario.Nombre} {r.Veterinario.Apellido}")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">–</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-md-4">
+        <h4>Nuevo registro</h4>
+
+        @* Si la internación ya está de alta, no dejamos cargar más registros *@
+        @if (Model.Estado == "Alta" && Model.FechaAlta.HasValue)
+        {
+            <div class="alert alert-info">
+                Esta internación ya fue dada de alta. No se pueden agregar más registros.
+            </div>
+
+            <a asp-controller="ConsultasClinicas"
+               asp-action="Details"
+               asp-route-id="@Model.ConsultaIngresoId"
+               class="btn btn-secondary w-100 mt-2">
+                Volver a la consulta
+            </a>
+        }
+        else
+        {
+            <form asp-action="AgregarRegistro" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="internacionId" value="@Model.Id" />
+                <input type="hidden" name="consultaId" value="@Model.ConsultaIngresoId" />
+
+                <div class="mb-3">
+                    <label class="form-label">Veterinario</label>
+                    <select name="veterinarioId"
+                            class="form-select"
+                            asp-items="ViewBag.Veterinarios">
+                        <option value="">-- Seleccioná un veterinario --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea name="descripcion" class="form-control" rows="3"
+                          placeholder="Ej: 2 ml dexametasona IV, antibiótico 3 ml IM..."></textarea>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Peso (kg)</label>
+                        <input type="number" step="0.01" name="pesoKg" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Temperatura (°C)</label>
+                        <input type="number" step="0.1" name="temperaturaC" class="form-control" />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Agregar registro</button>
+
+                <a asp-controller="ConsultasClinicas"
+                   asp-action="Details"
+                   asp-route-id="@Model.ConsultaIngresoId"
+                   class="btn btn-secondary w-100 mt-2">
+                    Volver a la consulta
+                </a>
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#btnDarAlta').on('click', function (e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Dar de alta internación',
+                    text: '¿Confirmás el alta de esta internación?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, dar de alta',
+                    cancelButtonText: 'Cancelar'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        $('#formDarAlta').submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

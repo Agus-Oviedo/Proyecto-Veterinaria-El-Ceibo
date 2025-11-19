@@ -1,0 +1,39 @@
+﻿@model VeterinariaElCeibo.Models.EditarRolesUsuarioViewModel
+
+@{
+    ViewData["Title"] = "Editar roles de usuario";
+}
+
+<h1>Editar roles de usuario</h1>
+
+<div class="mb-3">
+    <p>
+        <strong>Usuario:</strong> @Model.Email
+    </p>
+</div>
+
+<form asp-action="EditarRoles" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="mb-3">
+        <label class="form-label">Roles</label>
+        <div class="border rounded p-2">
+            @for (int i = 0; i < Model.Roles.Count; i++)
+            {
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           asp-for="Roles[i].Seleccionado" />
+                    <label class="form-check-label">
+                        @Model.Roles[i].Nombre
+                    </label>
+                    <input type="hidden" asp-for="Roles[i].Nombre" />
+                </div>
+            }
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar roles</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Volver</a>
+</form>

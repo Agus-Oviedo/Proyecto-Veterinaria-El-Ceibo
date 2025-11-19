@@ -1,0 +1,223 @@
+﻿@model VeterinariaElCeibo.Models.Turno
+
+@{
+    ViewData["Title"] = "Nuevo turno";
+}
+
+<h1>Nuevo turno</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <!-- Mostrar TODOS los errores -->
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            @if (ViewBag.Errores != null)
+            {
+                <ul class="text-danger">
+                    @foreach (var err in (IEnumerable<string>)ViewBag.Errores)
+                    {
+                        <li>@err</li>
+                    }
+                </ul>
+            }
+
+            <!-- Cliente -->
+            <div class="mb-3">
+                <label class="form-label" for="ClienteId">Cliente</label>
+                <select id="ClienteId" name="ClienteId" class="form-select" asp-items="ViewBag.ClienteId">
+                    <option value="">-- Seleccioná un cliente --</option>
+                </select>
+                @Html.ValidationMessage("ClienteId", "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Mascota (se llena según el cliente) -->
+            <div class="mb-3">
+                <label asp-for="MascotaId" class="form-label"></label>
+                <select asp-for="MascotaId" class="form-select" asp-items="ViewBag.MascotaId" id="MascotaId">
+                    <option value="">-- Primero elegí un cliente --</option>
+                </select>
+                <span asp-validation-for="MascotaId" class="text-danger"></span>
+            </div>
+
+            <!-- Fecha y hora del turno -->
+            <div class="mb-3">
+                <label asp-for="FechaHora" class="form-label"></label>
+                <input asp-for="FechaHora" class="form-control" type="datetime-local" id="FechaHora" />
+                <span asp-validation-for="FechaHora" class="text-danger"></span>
+            </div>
+
+            <!-- Tipo de turno -->
+            <div class="mb-3">
+                <label asp-for="TipoTurno" class="form-label"></label>
+                <select asp-for="TipoTurno" class="form-select">
+                    <option value="Atención veterinaria">Atención veterinaria</option>
+                    <option value="Peluquería">Peluquería</option>
+                </select>
+                <span asp-validation-for="TipoTurno" class="text-danger"></span>
+            </div>
+
+            <!-- Motivo -->
+            <div class="mb-3">
+                <label asp-for="Motivo" class="form-label"></label>
+                <input asp-for="Motivo" class="form-control" />
+                <span asp-validation-for="Motivo" class="text-danger"></span>
+            </div>
+
+            <!-- Notas de recepción -->
+            <div class="mb-3">
+                <label asp-for="NotasRecepcion" class="form-label"></label>
+                <textarea asp-for="NotasRecepcion" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="NotasRecepcion" class="text-danger"></span>
+            </div>
+
+            <!-- Estado (opcional) -->
+            <div class="mb-3">
+                <label asp-for="EstadoTurno" class="form-label"></label>
+                <select asp-for="EstadoTurno" class="form-select">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Confirmado">Confirmado</option>
+                    <option value="Atendido">Atendido</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+                <span asp-validation-for="EstadoTurno" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-secondary">Volver</a>
+        </form>
+    </div>
+
+    <!-- Columna derecha: "calendario" del día -->
+    <div class="col-md-6">
+        <h4>Turnos ya agendados para ese día</h4>
+        <p class="text-muted">
+            Elegí una fecha para ver qué turnos ya existen en ese día.
+        </p>
+
+        <!-- Nueva fecha solo para CONSULTAR agenda -->
+        <div class="mb-2">
+            <label class="form-label" for="FechaConsulta">Fecha</label>
+            <input type="date" id="FechaConsulta" class="form-control form-control-sm" />
+        </div>
+
+        <table class="table table-sm table-bordered" id="tablaTurnosDia" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Mascota</th>
+                    <th>Cliente</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <div id="mensajeSinTurnos" class="text-muted" style="display:none;">
+            No hay turnos para la fecha seleccionada.
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Función común para cargar los turnos de un día
+        function cargarTurnosDia(valorFecha) {
+            if (!valorFecha) {
+                $('#tablaTurnosDia').hide();
+                $('#mensajeSinTurnos').hide();
+                return;
+            }
+
+            $.getJSON('@Url.Action("ObtenerTurnosPorFecha", "Turnos")',
+                { fecha: valorFecha },
+                function (data) {
+                    var $tbody = $('#tablaTurnosDia tbody');
+                    $tbody.empty();
+
+                    if (!data || data.length === 0) {
+                        $('#tablaTurnosDia').hide();
+                        $('#mensajeSinTurnos').show();
+                        return;
+                    }
+
+                    $('#mensajeSinTurnos').hide();
+                    $('#tablaTurnosDia').show();
+
+                    $.each(data, function (i, t) {
+                        var fila = '<tr>' +
+                            '<td>' + t.hora + '</td>' +
+                            '<td>' + t.mascota + '</td>' +
+                            '<td>' + t.cliente + '</td>' +
+                            '<td>' + t.tipoTurno + '</td>' +
+                            '<td>' + t.estado + '</td>' +
+                            '</tr>';
+                        $tbody.append(fila);
+                    });
+                });
+        }
+
+        $(document).ready(function () {
+
+            // Cuando cambia el cliente, cargamos mascotas por AJAX
+            $('#ClienteId').change(function () {
+                var clienteId = $(this).val();
+                var $mascotaSelect = $('#MascotaId');
+
+                $mascotaSelect.empty();
+
+                if (!clienteId) {
+                    $mascotaSelect.append($('<option>', {
+                        value: '',
+                        text: '-- Primero elegí un cliente --'
+                    }));
+                    return;
+                }
+
+                $.getJSON('@Url.Action("ObtenerMascotasPorCliente", "Turnos")',
+                    { clienteId: clienteId },
+                    function (data) {
+                        $mascotaSelect.append($('<option>', {
+                            value: '',
+                            text: '-- Seleccioná una mascota --'
+                        }));
+
+                        $.each(data, function (i, mascota) {
+                            $mascotaSelect.append($('<option>', {
+                                value: mascota.id,
+                                text: mascota.nombreMascota
+                            }));
+                        });
+                    });
+            });
+
+            // Cuando cambia la FECHA de consulta (solo día) -> carga agenda
+            $('#FechaConsulta').change(function () {
+                var valor = $(this).val();    // yyyy-MM-dd
+                cargarTurnosDia(valor);
+            });
+
+            // Cuando cambia Fecha y hora del turno:
+            // - sincronzamos la fecha en FechaConsulta
+            // - cargamos agenda también
+            $('#FechaHora').change(function () {
+                var valor = $(this).val(); // yyyy-MM-ddTHH:mm
+                if (valor) {
+                    var soloFecha = valor.substring(0, 10); // yyyy-MM-dd
+                    $('#FechaConsulta').val(soloFecha);
+                }
+                cargarTurnosDia(valor);
+            });
+
+        });
+    </script>
+}

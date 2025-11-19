@@ -1,0 +1,65 @@
+﻿@model IEnumerable<VeterinariaElCeibo.Models.Internacion>
+
+@{
+    ViewData["Title"] = "Mascotas internadas";
+}
+
+<h1>Mascotas internadas</h1>
+
+<p class="text-muted">
+    Listado de internaciones <strong>activas</strong> (sin fecha de alta).
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Mascota</th>
+            <th>Tutor</th>
+            <th>Fecha ingreso</th>
+            <th>Motivo</th>
+            <th style="width: 200px;">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    No hay mascotas internadas actualmente.
+                </td>
+            </tr>
+        }
+        else
+        {
+            foreach (var i in Model)
+            {
+                <tr>
+                    <td>@i.Mascota?.NombreMascota</td>
+                    <td>@i.Mascota?.Cliente?.NombreCompleto</td>
+                    <td>@i.FechaIngreso.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@i.MotivoIngreso</td>
+                    <td>
+                        <a asp-action="Hoja"
+                           asp-route-consultaId="@i.ConsultaIngresoId"
+                           class="btn btn-sm btn-primary me-2">
+                            Ver hoja
+                        </a>
+
+                        <a asp-controller="ConsultasClinicas"
+                           asp-action="Index"
+                           asp-route-mascotaId="@i.MascotaId"
+                           class="btn btn-sm btn-outline-secondary">
+                            Historia clínica
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<a asp-controller="Home"
+   asp-action="Index"
+   class="btn btn-secondary">
+    &larr; Volver al inicio
+</a>
