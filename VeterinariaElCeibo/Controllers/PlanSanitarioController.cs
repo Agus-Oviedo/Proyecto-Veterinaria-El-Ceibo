@@ -28,7 +28,6 @@ namespace VeterinariaElCeibo.Controllers
         }
 
         // ================== LIBRETA SANITARIA ==================
-        // GET: PlanSanitario?mascotaId=5
         public async Task<IActionResult> Index(int mascotaId)
         {
             var mascota = await _context.Mascotas

@@ -5,8 +5,11 @@
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h2 class="mb-0">Clientes</h2>
+    <div class="d-flex flex-column align-items-center text-center">
+        <div class="d-flex align-items-center justify-content-center mb-1">
+            <i class="fa-solid fa-user fa-lg me-2"></i> <!-- Icono al lado -->
+            <h2 class="mb-0">Clientes</h2>
+        </div>
         <p class="text-muted mb-0">Listado de tutores.</p>
     </div>
 
@@ -32,7 +35,7 @@ else
     </div>
 
     <div class="table-responsive">
-        <table class="table table-sm align-middle" id="clientes-table">
+        <table class="table table-active align-middle" id="clientes-table">
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -58,10 +61,11 @@ else
                             <a asp-controller="Mascotas"
                                asp-action="Index"
                                asp-route-clienteId="@item.Id"
-                               class="btn btn-sm btn-outline-secondary me-1">
+                               class="btn btn-sm btn-dark me-1">
                                 Mascotas
                             </a>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1">
+                            <a asp-action="Edit" 
+                               asp-route-id="@item.Id" class="btn btn-sm btn-info me-1">
                                 Editar
                             </a>
 
@@ -71,7 +75,7 @@ else
                                   method="post"
                                   class="d-inline delete-form">
                                 <button type="button"
-                                        class="btn btn-sm btn-outline-danger btn-delete"
+                                        class="btn btn-sm btn-danger btn-delete"
                                         data-nombre="@($"{item.Nombre} {item.Apellido}")">
                                     Eliminar
                                 </button>
@@ -85,15 +89,18 @@ else
 
     <!-- Paginación + botón volver -->
     <div class="d-flex justify-content-between align-items-center mt-3">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
-            ← Volver al inicio
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="ceibo-back-pill">
+            <span class="ceibo-back-pill-icon">←</span>
+            Volver al inicio
         </a>
 
         <div id="clientes-pagination" style="display:none;" class="d-flex align-items-center gap-2">
             <div class="small text-muted" id="clientes-page-info"></div>
             <div>
-                <button type="button" class="btn btn-sm btn-outline-secondary me-1" id="clientes-prev">Anterior</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="clientes-next">Siguiente</button>
+                <button type="button" class="btn btn-sm btn-secondary me-1" id="clientes-prev">Anterior</button>
+                <button type="button" class="btn btn-sm btn-secondary" id="clientes-next">Siguiente</button>
             </div>
         </div>
     </div>

@@ -101,13 +101,18 @@
                 <span asp-validation-for="ProximoControl" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Guardar consulta</button>
+            <div class="d-flex justify-content-between mt-3">
+                <a asp-action="Index"
+                   asp-route-mascotaId="@Model.MascotaId"
+                   class="ceibo-back-pill">
+                    <span class="ceibo-back-pill-icon">←</span>
+                    Volver a historia clínica
+                </a>
 
-            <a asp-action="Index"
-               asp-route-mascotaId="@Model.MascotaId"
-               class="btn btn-secondary">
-                Volver a historia clínica
-            </a>
+                <button type="submit" class="btn ceibo-btn-primary">
+                    Guardar consulta
+                </button>
+            </div>
         </form>
     </div>
 </div>

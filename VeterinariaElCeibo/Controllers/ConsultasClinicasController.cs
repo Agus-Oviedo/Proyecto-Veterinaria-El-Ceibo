@@ -11,7 +11,8 @@ using VeterinariaElCeibo.Models;
 
 namespace VeterinariaElCeibo.Controllers
 {
-    [Authorize]
+    // 👉 SOLO Administrador y Veterinario pueden usar historia clínica
+    [Authorize(Roles = "Administrador,Veterinario")]
     public class ConsultasClinicasController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -88,7 +89,7 @@ namespace VeterinariaElCeibo.Controllers
                 ModelState.AddModelError(string.Empty, "Falta la mascota de la consulta.");
             }
 
-            // 👉 Ahora el veterinario se elige desde el combo
+            // veterinario elegido desde el combo
             if (string.IsNullOrEmpty(consulta.VeterinarioId))
             {
                 ModelState.AddModelError(nameof(ConsultaClinica.VeterinarioId), "Debe seleccionar un veterinario.");
@@ -130,6 +131,7 @@ namespace VeterinariaElCeibo.Controllers
             ViewBag.Mascota = consulta.Mascota;
             await CargarVeterinariosEnViewBag(consulta.VeterinarioId);
 
+            // devolvemos una copia sin navegaciones para evitar problemas de tracking
             return View(COPIAR_ConsultaSinNavegacion(consulta));
         }
 
@@ -220,6 +222,7 @@ namespace VeterinariaElCeibo.Controllers
 
             var mascotaId = consulta.MascotaId;
 
+            // No dejar borrar si tiene internación
             var internacion = await _context.Internaciones
                 .FirstOrDefaultAsync(i => i.ConsultaIngresoId == id);
 
@@ -240,14 +243,12 @@ namespace VeterinariaElCeibo.Controllers
             return RedirectToAction(nameof(Index), new { mascotaId });
         }
 
+        // ================== MÉTODOS PRIVADOS ==================
         private bool ConsultaExists(int id)
         {
             return _context.ConsultasClinicas.Any(e => e.Id == id);
         }
 
-        // ================== MÉTODOS PRIVADOS ==================
-
-        // Igual que en PlanSanitario: cargas todos los usuarios con rol "Veterinario"
         private async Task CargarVeterinariosEnViewBag(string? veterinarioSeleccionadoId = null)
         {
             var vets = await _userManager.GetUsersInRoleAsync("Veterinario");
@@ -262,7 +263,6 @@ namespace VeterinariaElCeibo.Controllers
                 .ToList();
         }
 
-        // Para evitar problemas de tracking con las propiedades de navegación en Edit GET
         private ConsultaClinica COPIAR_ConsultaSinNavegacion(ConsultaClinica c)
         {
             return new ConsultaClinica

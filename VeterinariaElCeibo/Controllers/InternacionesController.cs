@@ -11,7 +11,8 @@ using VeterinariaElCeibo.Models;
 
 namespace VeterinariaElCeibo.Controllers
 {
-    [Authorize]
+    // 👉 SOLO Administrador y Veterinario
+    [Authorize(Roles = "Administrador,Veterinario")]
     public class InternacionesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -104,7 +105,7 @@ namespace VeterinariaElCeibo.Controllers
                 return RedirectToAction("Details", "ConsultasClinicas", new { id = consultaId });
             }
 
-            await CargarVeterinariosEnViewBag(); // 👉 para el combo del nuevo registro
+            await CargarVeterinariosEnViewBag(); // 👉 combo para nuevo registro
 
             return View(internacion);
         }

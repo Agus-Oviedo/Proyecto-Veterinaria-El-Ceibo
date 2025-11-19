@@ -118,13 +118,6 @@
             <div class="alert alert-info">
                 Esta internación ya fue dada de alta. No se pueden agregar más registros.
             </div>
-
-            <a asp-controller="ConsultasClinicas"
-               asp-action="Details"
-               asp-route-id="@Model.ConsultaIngresoId"
-               class="btn btn-secondary w-100 mt-2">
-                Volver a la consulta
-            </a>
         }
         else
         {
@@ -161,16 +154,19 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Agregar registro</button>
-
-                <a asp-controller="ConsultasClinicas"
-                   asp-action="Details"
-                   asp-route-id="@Model.ConsultaIngresoId"
-                   class="btn btn-secondary w-100 mt-2">
-                    Volver a la consulta
-                </a>
             </form>
         }
     </div>
+</div>
+
+<div class="mt-3">
+    <a asp-controller="ConsultasClinicas"
+       asp-action="Details"
+       asp-route-id="@Model.ConsultaIngresoId"
+       class="ceibo-back-pill">
+        <span class="ceibo-back-pill-icon">←</span>
+        Volver a la consulta
+    </a>
 </div>
 
 @section Scripts {

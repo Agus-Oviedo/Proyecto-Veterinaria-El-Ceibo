@@ -73,8 +73,17 @@
                 <span asp-validation-for="NotasRecepcion" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Guardar cambios</button>
-            <a asp-action="Index" class="btn btn-secondary">Volver</a>
+            <div class="mt-4 d-flex justify-content-between">
+                <a asp-action="Index"
+                   class="ceibo-back-pill">
+                    <span class="ceibo-back-pill-icon">←</span>
+                    Volver a turnos del mes
+                </a>
+
+                <button type="submit" class="btn ceibo-btn-primary">
+                    Guardar cambios
+                </button>
+            </div>
         </form>
     </div>
 

@@ -138,8 +138,34 @@ body {
         color: var(--ceibo-red);
     }
 
-/* FOOTER ----------------------------------------------------------- */
 
+/* BOTÓN VOLVER (pastilla gris) ------------------------------------ */
+
+.ceibo-back-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background-color: #e9ecef;
+    color: #343a40;
+    font-size: 0.9rem;
+    border: none;
+    text-decoration: none;
+}
+
+    .ceibo-back-pill:hover {
+        background-color: #d3d8de;
+        color: #212529;
+        text-decoration: none;
+    }
+
+.ceibo-back-pill-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* FOOTER ----------------------------------------------------------- */
 .ceibo-footer {
     border-top: 1px solid #e2e2e2;
     padding: 0.6rem 0;
@@ -196,6 +222,13 @@ body {
     opacity: 0.85;
 }
 
+/* Iconos en negro */
+.ceibo-quick-card-primary .ceibo-quick-card-icon {
+    color: #000000 !important; /* negro */
+        
+}
+
+
 /* Wrapper para centrar la sección de accesos rápidos en Home */
 
 .ceibo-access-wrapper {
@@ -215,6 +248,7 @@ body {
     .ceibo-access-card .card-body {
         border-radius: 1.5rem; /* igual curvatura por si Bootstrap dibuja fondo */
     }
+
 /* ====== Páginas de Login / Register ====== */
 
 .ceibo-auth-card {

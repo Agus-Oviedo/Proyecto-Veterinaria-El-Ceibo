@@ -5,17 +5,6 @@
 <!-- Navbar simple arriba del dashboard -->
 <nav class="mb-3 d-flex justify-content-between align-items-center">
 
-    <div>
-        @* Solo el ADMIN ve este botón *@
-        @if (User.IsInRole("Administrador"))
-        {
-            <a asp-controller="Usuarios"
-               asp-action="Index"
-               class="btn btn-sm btn-outline-light ceibo-btn-outline">
-                👥 Usuarios / Roles
-            </a>
-        }
-    </div>
 </nav>
 
 <div class="ceibo-home-hero">
@@ -28,7 +17,9 @@
                     <div class="col-12 col-md-4">
                         <a asp-controller="Turnos" asp-action="Index"
                            class="ceibo-quick-card ceibo-quick-card-primary">
-                            <div class="ceibo-quick-card-icon">📅</div>
+                            <div class="ceibo-quick-card-icon">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
                             <div class="ceibo-quick-card-title">Turnos</div>
                             <div class="ceibo-quick-card-subtitle">
                                 Agenda de turnos programados
@@ -39,7 +30,9 @@
                     <div class="col-12 col-md-4">
                         <a asp-controller="Clientes" asp-action="Index"
                            class="ceibo-quick-card ceibo-quick-card-primary">
-                            <div class="ceibo-quick-card-icon">👤</div>
+                            <div class="ceibo-quick-card-icon">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
                             <div class="ceibo-quick-card-title">Clientes</div>
                             <div class="ceibo-quick-card-subtitle">
                                 Listado de clientes y sus mascotas
@@ -50,7 +43,9 @@
                     <div class="col-12 col-md-4">
                         <a asp-controller="Internaciones" asp-action="Activas"
                            class="ceibo-quick-card ceibo-quick-card-primary">
-                            <div class="ceibo-quick-card-icon">🐾</div>
+                            <div class="ceibo-quick-card-icon">
+                                <i class="fa-solid fa-paw"></i>
+                            </div>
                             <div class="ceibo-quick-card-title">Internación</div>
                             <div class="ceibo-quick-card-subtitle">
                                 Mascotas internadas

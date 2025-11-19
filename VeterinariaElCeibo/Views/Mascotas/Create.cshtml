@@ -3,35 +3,23 @@
 @{
     ViewData["Title"] = "Nueva mascota";
 
-    // Cliente enviado desde el controller (ViewBag.Cliente)
     var cliente = ViewBag.Cliente as VeterinariaElCeibo.Models.Cliente;
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h2 class="mb-0">Nueva mascota</h2>
-        @if (cliente != null)
-        {
-            <p class="text-muted mb-0">
-                Tutor: <strong>@cliente.Nombre @cliente.Apellido</strong>
-            </p>
-        }
-    </div>
-
+<div class="mb-3">
+    <h2 class="mb-0">Nueva mascota</h2>
     @if (cliente != null)
     {
-        <a asp-action="Index"
-           asp-route-clienteId="@cliente.Id"
-           class="btn btn-outline-secondary">
-            ← Volver a mascotas de @cliente.Nombre
-        </a>
+        <p class="text-muted mb-0">
+            Tutor: <strong>@cliente.Nombre @cliente.Apellido</strong>
+        </p>
     }
 </div>
 
 <form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
 
-    @* MUY IMPORTANTE: mandamos el ClienteId explícitamente *@
+    @* Mandamos el ClienteId explícitamente *@
     @if (cliente != null)
     {
         <input type="hidden" name="ClienteId" value="@cliente.Id" />
@@ -102,8 +90,18 @@
         {
             <a asp-action="Index"
                asp-route-clienteId="@cliente.Id"
-               class="btn btn-outline-secondary">
-                ← Cancelar
+               class="ceibo-back-pill">
+                <span class="ceibo-back-pill-icon">←</span>
+                Cancelar
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Clientes"
+               asp-action="Index"
+               class="ceibo-back-pill">
+                <span class="ceibo-back-pill-icon">←</span>
+                Cancelar
             </a>
         }
 

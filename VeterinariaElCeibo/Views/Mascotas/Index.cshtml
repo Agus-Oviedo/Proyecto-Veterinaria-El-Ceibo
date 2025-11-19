@@ -3,27 +3,35 @@
 @{
     ViewData["Title"] = "Mascotas";
     var cliente = Model.Cliente;
+
+    // flags de roles
+    bool esAdmin = User.IsInRole("Administrador");
+    bool esVet = User.IsInRole("Veterinario");
+    bool esPelu = User.IsInRole("Peluqueria");
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h2 class="mb-0">Mascotas</h2>
+<div class="mascotas-header-wrapper mb-4">
+    <div class="mascotas-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-0">Mascotas</h2>
+
+            @if (cliente != null)
+            {
+                <p class="text-muted mb-0 mascotas-tutor">
+                    Tutor: <strong>@cliente.Nombre @cliente.Apellido</strong>
+                </p>
+            }
+        </div>
+
         @if (cliente != null)
         {
-            <p class="text-muted mb-0">
-                Tutor: <strong>@cliente.Nombre @cliente.Apellido</strong>
-            </p>
+            <a asp-action="Create"
+               asp-route-clienteId="@cliente.Id"
+               class="btn ceibo-btn-primary rounded-pill mascotas-btn">
+                + Nueva mascota
+            </a>
         }
     </div>
-
-    @if (cliente != null)
-    {
-        <a asp-action="Create"
-           asp-route-clienteId="@cliente.Id"
-           class="btn ceibo-btn-primary">
-            + Nueva mascota
-        </a>
-    }
 </div>
 
 @if (Model.Mascotas == null || !Model.Mascotas.Any())
@@ -36,7 +44,7 @@
 else
 {
     <div class="table-responsive">
-        <table class="table table-sm align-middle">
+        <table class="table table-active align-middle">
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -71,37 +79,40 @@ else
                             @(m.Castrado ? "Sí" : "No")
                         </td>
                         <td class="text-end">
-                            @* Consulta Clinica *@
-                            <a asp-controller="ConsultasClinicas"
-                               asp-action="Index"
-                               asp-route-mascotaId="@m.Id"
-                               class="btn btn-sm btn-primary">
-                                Consulta
-                            </a>
 
+                            @* SOLO Admin + Veterinario pueden ver Consulta e Historia Clínica *@
+                            @if (esAdmin || esVet)
+                            {
+                                <a asp-controller="ConsultasClinicas"
+                                   asp-action="Index"
+                                   asp-route-mascotaId="@m.Id"
+                                   class="btn btn-sm btn-primary me-1">
+                                    Consulta
+                                </a>
 
-                            @* Libreta sanitaria / Plan sanitario *@
-                            <a asp-controller="PlanSanitario"
-                               asp-action="Index"
-                               asp-route-mascotaId="@m.Id"
-                               class="btn btn-sm btn-outline-success me-1">
-                                Libreta sanitaria
-                            </a>
+                                <a asp-controller="PlanSanitario"
+                                   asp-action="Index"
+                                   asp-route-mascotaId="@m.Id"
+                                   class="btn btn-sm btn-success me-1">
+                                    Libreta sanitaria
+                                </a>
+                            }
 
                             @* Editar mascota *@
                             <a asp-action="Edit"
                                asp-route-id="@m.Id"
-                               class="btn btn-sm btn-outline-secondary me-1">
+                               class="btn btn-sm btn-secondary me-1">
                                 Editar
                             </a>
 
-                            @* Eliminar: form POST con SweetAlert2 si luego lo sumamos acá *@
+                            @* Eliminar con SweetAlert2 *@
                             <form asp-action="Delete"
                                   asp-route-id="@m.Id"
                                   method="post"
                                   class="d-inline delete-form">
+                                @Html.AntiForgeryToken()
                                 <button type="submit"
-                                        class="btn btn-sm btn-outline-danger">
+                                        class="btn btn-sm btn-danger">
                                     Eliminar
                                 </button>
                             </form>
@@ -116,11 +127,33 @@ else
 <div class="mt-3">
     <a asp-controller="Clientes"
        asp-action="Index"
-       class="btn btn-outline-secondary">
-        ← Volver a clientes
+       class="ceibo-back-pill">
+        <span class="ceibo-back-pill-icon">←</span>
+        Volver a clientes
     </a>
 </div>
 
 @section Scripts {
-    @* si más adelante querés SweetAlert2 para eliminar mascotas, lo agregamos acá *@
+    <script>
+        $(function () {
+            $('.delete-form').on('submit', function (e) {
+                e.preventDefault();
+
+                var form = this;
+
+                Swal.fire({
+                    title: 'Eliminar mascota',
+                    text: '¿Seguro que querés eliminar esta mascota? Esta acción no se puede deshacer.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 }

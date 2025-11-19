@@ -7,18 +7,19 @@
     var tutor = mascota?.Cliente;
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h2 class="mb-0">Editar vacuna</h2>
+<div class="mb-3">
+    <h2 class="mb-0">Editar vacuna</h2>
 
-        @if (mascota != null)
-        {
-            <p class="text-muted mb-0">
-                Mascota: <strong>@mascota.NombreMascota</strong>
-                (@mascota.Especie @if (!string.IsNullOrWhiteSpace(mascota.Raza)) {
-                @($"- {mascota.Raza}")
+    @if (mascota != null)
+    {
+        <p class="text-muted mb-0">
+            Mascota: <strong>@mascota.NombreMascota</strong>
+            (@mascota.Especie
+            @if (!string.IsNullOrWhiteSpace(mascota.Raza))
+            {
+                @(" - " + mascota.Raza)
             }
-)
+    )
         </p>
 
         @if (tutor != null)
@@ -27,16 +28,6 @@
                 Tutor: <strong>@tutor.Nombre @tutor.Apellido</strong>
             </p>
         }
-                }
-    </div>
-
-    @if (mascota != null)
-    {
-        <a asp-action="Index"
-           asp-route-mascotaId="@mascota.Id"
-           class="btn btn-outline-secondary">
-            ← Volver a libreta sanitaria
-        </a>
     }
 </div>
 
@@ -77,8 +68,17 @@
                 {
                     <a asp-action="Index"
                        asp-route-mascotaId="@mascota.Id"
-                       class="btn btn-outline-secondary">
-                        ← Cancelar
+                       class="ceibo-back-pill">
+                        <span class="ceibo-back-pill-icon">←</span>
+                        Cancelar
+                    </a>
+                }
+                else
+                {
+                    <a asp-action="Index"
+                       class="ceibo-back-pill">
+                        <span class="ceibo-back-pill-icon">←</span>
+                        Cancelar
                     </a>
                 }
 
